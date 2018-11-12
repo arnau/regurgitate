@@ -1,0 +1,64 @@
+{
+  "@context": "http://www.w3.org/ns/csvw",
+  "prov:wasDerivedFrom": {
+    "url": "https://country.register.gov.uk",
+    "schema:identifier": "country"
+  },
+  "schema:name": "Countries snapshots",
+  "schema:description": "Snapshots of the countries list provided by the UK Government over time.",
+  "schema:author": { "schema:name": "Arnau Siches" },
+  "schema:copyrightHolder": { "schema:name": "Crown" },
+  "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+  "tableSchema": {
+    "aboutUrl": "https://country.register.gov.uk/{id}",
+    "columns": [{
+      "name": "id",
+      "titles": "id",
+      "schema:description": "The ISO two-letter code for a country, in uppercase.",
+      "propertyUrl": "schema:identifier",
+      "datatype": "string",
+      "format": "[A-Z]{2}",
+      "required": true
+    }, {
+      "name": "name",
+      "titles": "name",
+      "datatype": "string",
+      "propertyUrl": "schema:name",
+      "required": true
+    }, {
+      "name": "official-name",
+      "titles": "official-name",
+      "datatype": "string"
+    }, {
+      "name": "citizen-names",
+      "titles": "citizen-names",
+      "datatype": "string",
+      "separator": ";"
+    }, {
+      "name": "start-date",
+      "titles": "start-date",
+      "format": "yyyy-MM-dd",
+      "datatype": "date"
+    }, {
+      "name": "end-date",
+      "titles": "end-date",
+      "format": "yyyy-MM-dd",
+      "datatype": "date"
+    }, {
+      "virtual": true,
+      "propertyUrl": "rdf:type",
+      "valueUrl": "schema:Country"
+    }],
+    "primaryKey": "id"
+  },
+  "tables": [
+    {
+      "schema:name": "Countries (latest)",
+      "schema:author": { "schema:name": "FCO" },
+      "schema:datePublished": "2018-11-11",
+      "schema:version": "16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b",
+      "schema:sameAs": "/govuk/country/snapshots/16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b.csv",
+      "url": "/govuk/country/snapshots/latest.csv"
+    }
+  ]
+}

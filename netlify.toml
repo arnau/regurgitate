@@ -1,0 +1,11 @@
+[[headers]]
+for = "/govuk/country/snapshots/*"
+[headers.values]
+Link = "</govuk/country/csv-metadata.json>; rel=\"describedBy\"; type=\"application/csvm+json\""
+Content-Type = "text/csv"
+
+[[headers]]
+for = "/govuk/country/csv-metadata.json"
+[headers.values]
+Link = "</govuk/country/snapshots/latest.csv>; rel=\"describes\"; type=\"text/csv\""
+Content-Type = "application/csvm+json"
