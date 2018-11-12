@@ -1,3 +1,4 @@
+extern crate blot;
 extern crate csv;
 extern crate reqwest;
 #[macro_use]

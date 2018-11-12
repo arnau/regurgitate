@@ -37,13 +37,19 @@ pub struct Column {
     #[serde(skip_serializing_if = "Option::is_none")]
     datatype: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    separator: Option<String>,
+    separator: Option<char>,
     #[serde(skip_serializing_if = "Option::is_none")]
     format: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     required: Option<bool>,
     #[serde(rename = "virtual", skip_serializing_if = "Option::is_none")]
     implicit: Option<bool>,
+}
+
+impl Column {
+    pub fn separator(&self) -> &Option<char> {
+        &self.separator
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -60,6 +66,12 @@ impl TableSchema {
         self.columns
             .iter()
             .any(|ref col| col.name == Some(column_id.to_owned()))
+    }
+
+    pub fn column(&self, column_id: &str) -> Option<&Column> {
+        self.columns
+            .iter()
+            .find(|ref col| col.name == Some(column_id.to_owned()))
     }
 }
 

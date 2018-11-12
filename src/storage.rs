@@ -1,7 +1,10 @@
+use blot::multihash::{Hash, Multihash, Sha3256};
+use blot::tag::Tag;
+use blot::Blot;
 use crate::table::{Source, TableSchema};
 use csv;
 use reqwest::{self, header, Client, StatusCode};
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fmt;
 
@@ -34,14 +37,41 @@ impl Record {
             .expect("Missing 'key' attribute")
             .to_owned();
         self.0.insert("id".to_owned(), id);
+
         self.0.retain(|ref k, _| schema.contains_column(&k));
+
+        let checksum = self.checksum(&schema);
+        self.0.insert("checksum".to_owned(), checksum);
     }
 
-    pub fn prune(&mut self, source_id: &str) {
-        self.0.remove("index-entry-number");
-        self.0.remove("entry-number");
-        self.0.remove("entry-timestamp");
-        self.0.remove(source_id);
+    pub fn checksum(&self, schema: &TableSchema) -> String {
+        let digester = Sha3256;
+        let mut list: Vec<Vec<u8>> = self
+            .0
+            .iter()
+            .filter(|(_, v)| !v.is_empty())
+            .map(|(k, v)| {
+                let mut res: Vec<u8> = Vec::with_capacity(64);
+                res.extend_from_slice(k.blot(&digester).as_ref());
+
+                let col = schema.column(k).expect("Missing column");
+
+                if let Some(separator) = col.separator() {
+                    let set: HashSet<&str> = v.split(*separator).collect();
+                    res.extend_from_slice(set.blot(&digester).as_ref());
+                } else {
+                    res.extend_from_slice(v.blot(&digester).as_ref());
+                }
+
+                res
+            }).collect();
+
+        list.sort_unstable();
+
+        let digest = digester.digest_collection(Tag::Dict, list);
+        let hash = Hash::new(digester, digest);
+
+        format!("{}", hash)
     }
 }
 

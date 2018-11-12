@@ -9,7 +9,7 @@ path = "src/lib.rs"
 
 
 [dependencies]
-blot = "0.1"
+blot-lib = "0.1"
 reqwest = "0.9"
 serde = "1.0"
 serde_derive = "1.0"

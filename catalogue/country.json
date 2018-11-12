@@ -20,6 +20,11 @@
       "format": "[A-Z]{2}",
       "required": true
     }, {
+      "name": "checksum",
+      "titles": "checksum",
+      "datatype": "string",
+      "required": true
+    }, {
       "name": "name",
       "titles": "name",
       "datatype": "string",
