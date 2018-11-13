@@ -1,7 +1,7 @@
 {
   "@context": "http://www.w3.org/ns/csvw",
   "prov:wasDerivedFrom": {
-    "url": "https://country.register.gov.uk",
+    "schema:url": "https://country.register.gov.uk",
     "schema:identifier": "country"
   },
   "schema:name": "Countries snapshots",

@@ -44,6 +44,8 @@ impl Record {
         self.0.insert("checksum".to_owned(), checksum);
     }
 
+    /// Checksum is an implementation of a Blot dictionary after filtering out
+    /// empty cells and tranforming multivalue cells into sets of values.
     pub fn checksum(&self, schema: &TableSchema) -> String {
         let digester = Sha3256;
         let mut list: Vec<Vec<u8>> = self

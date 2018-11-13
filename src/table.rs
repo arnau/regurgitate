@@ -89,6 +89,7 @@ pub struct CopyrightHolder {
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Source {
+    #[serde(rename = "schema:url")]
     url: String,
     #[serde(rename = "schema:identifier")]
     identifier: String,
