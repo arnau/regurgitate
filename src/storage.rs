@@ -1,9 +1,9 @@
 use blot::multihash::{Hash, Multihash, Sha3256};
 use blot::tag::Tag;
 use blot::Blot;
-use crate::table::{Source, TableSchema};
+use crate::table::{Schema, Source};
 use csv;
-use reqwest::{self, header, Client, StatusCode};
+use reqwest::{header, Client, StatusCode};
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::fmt;
@@ -30,7 +30,7 @@ pub struct Record(HashMap<String, String>);
 
 impl Record {
     /// Retains any attribute found in the schema
-    pub fn retain(&mut self, schema: &TableSchema) {
+    pub fn retain(&mut self, schema: &Schema) {
         let id = self
             .0
             .get("key")
@@ -46,7 +46,7 @@ impl Record {
 
     /// Checksum is an implementation of a Blot dictionary after filtering out
     /// empty cells and tranforming multivalue cells into sets of values.
-    pub fn checksum(&self, schema: &TableSchema) -> String {
+    pub fn checksum(&self, schema: &Schema) -> String {
         let digester = Sha3256;
         let mut list: Vec<Vec<u8>> = self
             .0
@@ -87,12 +87,12 @@ pub trait Storage {
 pub struct Remote {
     client: Client,
     source: Source,
-    schema: TableSchema,
+    schema: Schema,
     records: Records,
 }
 
 impl Remote {
-    pub fn new(source: Source, schema: TableSchema) -> Remote {
+    pub fn new(source: Source, schema: Schema) -> Remote {
         Remote {
             client: Client::new(),
             source: source,

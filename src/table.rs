@@ -3,17 +3,39 @@
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Table {
+    #[serde(rename = "@context")]
+    context: String,
+    #[serde(rename = "schema:identifier")]
+    id: String,
     #[serde(rename = "schema:name")]
     name: String,
+    #[serde(rename = "schema:description")]
+    description: String,
     #[serde(rename = "schema:author")]
     author: Author,
+    #[serde(rename = "schema:publisher")]
+    publisher: Author,
     #[serde(rename = "schema:datePublished")]
     date_published: String,
-    #[serde(rename = "schema:version")]
-    version: String,
-    #[serde(rename = "schema:sameAs")]
-    redirect_url: String,
     url: String,
+    #[serde(rename = "prov:wasDerivedFrom")]
+    source: Source,
+    #[serde(rename = "schema:copyrightHolder")]
+    copyright_holder: CopyrightHolder,
+    #[serde(rename = "schema:license")]
+    license: String,
+    #[serde(rename = "tableSchema")]
+    schema: Schema,
+}
+
+impl Table {
+    pub fn source(&self) -> &Source {
+        &self.source
+    }
+
+    pub fn schema(&self) -> &Schema {
+        &self.schema
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -53,7 +75,7 @@ impl Column {
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct TableSchema {
+pub struct Schema {
     #[serde(rename = "aboutUrl")]
     about_url: String,
     columns: Vec<Column>,
@@ -61,7 +83,7 @@ pub struct TableSchema {
     primary_key: String, // TODO: Could be an array too
 }
 
-impl TableSchema {
+impl Schema {
     pub fn contains_column(&self, column_id: &str) -> bool {
         self.columns
             .iter()
@@ -91,47 +113,10 @@ pub struct CopyrightHolder {
 pub struct Source {
     #[serde(rename = "schema:url")]
     url: String,
-    #[serde(rename = "schema:identifier")]
-    identifier: String,
 }
 
 impl Source {
     pub fn url(&self) -> &str {
         &self.url
-    }
-
-    pub fn identifier(&self) -> &str {
-        &self.identifier
-    }
-}
-
-#[derive(Debug, Deserialize, Serialize)]
-pub struct TableGroup {
-    #[serde(rename = "@context")]
-    context: String,
-    #[serde(rename = "prov:wasDerivedFrom")]
-    source: Source,
-    #[serde(rename = "schema:name")]
-    name: String,
-    #[serde(rename = "schema:description")]
-    description: String,
-    #[serde(rename = "schema:author")]
-    author: Author,
-    #[serde(rename = "schema:copyrightHolder")]
-    copyright_holder: CopyrightHolder,
-    #[serde(rename = "schema:license")]
-    license: String,
-    #[serde(rename = "tableSchema")]
-    table_schema: TableSchema,
-    tables: Vec<Table>,
-}
-
-impl TableGroup {
-    pub fn source(&self) -> &Source {
-        &self.source
-    }
-
-    pub fn schema(&self) -> &TableSchema {
-        &self.table_schema
     }
 }

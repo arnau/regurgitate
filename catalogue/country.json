@@ -1,27 +1,31 @@
 {
   "@context": "http://www.w3.org/ns/csvw",
   "prov:wasDerivedFrom": {
-    "schema:url": "https://country.register.gov.uk",
-    "schema:identifier": "country"
+    "schema:url": "https://country.register.gov.uk"
   },
-  "schema:name": "Countries snapshots",
+  "url": "/govuk/country/latest.csv",
+  "schema:name": "Country register",
+  "schema:identifier": "16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b",
   "schema:description": "Snapshots of the countries list provided by the UK Government over time.",
-  "schema:author": { "schema:name": "Arnau Siches" },
-  "schema:copyrightHolder": { "schema:name": "Crown" },
+  "schema:publisher": { "schema:name": "Arnau Siches" },
+  "schema:datePublished": "2018-11-11",
+  "schema:author": { "schema:name": "Foreign Commonwealth Office" },
+  "schema:copyrightHolder": { "schema:name": "The Crown" },
   "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
   "tableSchema": {
     "aboutUrl": "https://country.register.gov.uk/{id}",
+    "primaryKey": "id",
     "columns": [{
-      "name": "id",
-      "titles": "id",
+      "name": "_id",
+      "titles": "_id",
       "schema:description": "The ISO two-letter code for a country, in uppercase.",
       "propertyUrl": "schema:identifier",
       "datatype": "string",
       "format": "[A-Z]{2}",
       "required": true
     }, {
-      "name": "checksum",
-      "titles": "checksum",
+      "name": "_checksum",
+      "titles": "_checksum",
       "datatype": "string",
       "required": true
     }, {
@@ -53,17 +57,6 @@
       "virtual": true,
       "propertyUrl": "rdf:type",
       "valueUrl": "schema:Country"
-    }],
-    "primaryKey": "id"
-  },
-  "tables": [
-    {
-      "schema:name": "Countries (latest)",
-      "schema:author": { "schema:name": "FCO" },
-      "schema:datePublished": "2018-11-11",
-      "schema:version": "16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b",
-      "schema:sameAs": "/govuk/country/snapshots/16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b.csv",
-      "url": "/govuk/country/snapshots/latest.csv"
-    }
-  ]
+    }]
+  }
 }

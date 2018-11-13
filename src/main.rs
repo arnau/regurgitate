@@ -4,7 +4,7 @@ extern crate reqwest;
 extern crate serde_json;
 
 use regurgitate::storage::{Remote, Storage};
-use regurgitate::table::TableGroup;
+use regurgitate::table::Table;
 use std::error::Error;
 use std::fs;
 // use std::process;
@@ -21,10 +21,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let filename = "./catalogue/country.json";
     let raw = fs::read_to_string(filename)?;
-    let table_group: TableGroup = serde_json::from_str(&raw)?;
-    // println!("{}", serde_json::to_string(&table_group)?);
+    let table: Table = serde_json::from_str(&raw)?;
 
-    let mut storage = Remote::new(table_group.source().clone(), table_group.schema().clone());
+    let mut storage = Remote::new(table.source().clone(), table.schema().clone());
     storage.read()?;
 
     println!("{:#?}", &storage.records());
