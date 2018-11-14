@@ -1,12 +1,10 @@
 {
   "@context": "http://www.w3.org/ns/csvw",
-  "prov:wasDerivedFrom": {
-    "schema:url": "https://country.register.gov.uk"
-  },
   "url": "/govuk/country/latest.csv",
+  "schema:isBasedOn": "https://country.register.gov.uk",
   "schema:name": "Country register",
   "schema:identifier": "16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b",
-  "schema:description": "Snapshots of the countries list provided by the UK Government over time.",
+  "schema:description": "Country list provided by the Foreign Commonwealth Office of the UK Government.",
   "schema:publisher": { "schema:name": "Arnau Siches" },
   "schema:datePublished": "2018-11-11",
   "schema:author": { "schema:name": "Foreign Commonwealth Office" },
@@ -14,7 +12,7 @@
   "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
   "tableSchema": {
     "aboutUrl": "https://country.register.gov.uk/{id}",
-    "primaryKey": "id",
+    "primaryKey": "_id",
     "columns": [{
       "name": "_id",
       "titles": "_id",

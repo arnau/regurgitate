@@ -18,8 +18,8 @@ pub struct Table {
     #[serde(rename = "schema:datePublished")]
     date_published: String,
     url: String,
-    #[serde(rename = "prov:wasDerivedFrom")]
-    source: Source,
+    #[serde(rename = "schema:isBasedOn")]
+    source: String,
     #[serde(rename = "schema:copyrightHolder")]
     copyright_holder: CopyrightHolder,
     #[serde(rename = "schema:license")]
@@ -29,7 +29,7 @@ pub struct Table {
 }
 
 impl Table {
-    pub fn source(&self) -> &Source {
+    pub fn source(&self) -> &str {
         &self.source
     }
 
@@ -107,16 +107,4 @@ pub struct Author {
 pub struct CopyrightHolder {
     #[serde(rename = "schema:name")]
     name: String,
-}
-
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct Source {
-    #[serde(rename = "schema:url")]
-    url: String,
-}
-
-impl Source {
-    pub fn url(&self) -> &str {
-        &self.url
-    }
 }

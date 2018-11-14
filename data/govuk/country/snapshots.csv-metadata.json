@@ -1,0 +1,53 @@
+{
+  "@context": "http://www.w3.org/ns/csvw",
+  "url": "/govuk/country/snapshots.csv",
+  "schema:name": "Country register snapshots",
+  "schema:identifier": "snapshots",
+  "schema:description": "Snapshots of the country list provided by the Foreign Commonwealth Office of the UK Government.",
+  "schema:publisher": { "schema:name": "Arnau Siches" },
+  "schema:copyrightHolder": { "schema:name": "Arnau Siches" },
+  "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+  "tableSchema": {
+    "primaryKey": "_id",
+    "columns": [{
+      "name": "_id",
+      "titles": "_id",
+      "description": "The blot checksum of the snapshot data.",
+      "datatype": "string",
+      "required": true
+    }, {
+      "name": "origin",
+      "titles": "origin",
+      "description": "The URL of the original register the snapshot is taken from.",
+      "datatype": "string"
+    }, {
+      "name": "entry-number",
+      "titles": "entry-number",
+      "description": "The identifier of the latest change (entry) when the snapshot was taken.",
+      "datatype": "string"
+    }, {
+      "name": "published",
+      "titles": "published",
+      "description": "The date when the snapshot was taken.",
+      "format": "yyyy-MM-ddThh:mm:ssZ",
+      "datatype": "datetime"
+    }, {
+      "name": "verified",
+      "titles": "verified",
+      "description": "The date when the snapshot was verified to be the most recent data in origin.",
+      "format": "yyyy-MM-ddThh:mm:ssZ",
+      "datatype": "datetime"
+
+    }, {
+      "name": "superseded",
+      "titles": "superseded",
+      "description": "The snapshot identifier that supersedes this snapshot.",
+      "datatype": "string"
+    }, {
+      "name": "latest",
+      "titles": "latest",
+      "description": "True if it is the latest snapshot available.",
+      "datatype": "boolean"
+    }]
+  }
+}

@@ -7,11 +7,10 @@ extern crate serde_json;
 
 pub mod annotation;
 pub mod dataset;
-pub mod fetcher;
-pub mod storage;
+pub mod remote;
 pub mod table;
 pub mod url;
 
-pub use dataset::Dataset;
-pub use fetcher::{Blob, Record, Records};
+pub use dataset::{Record, Records, Source, Storage};
+pub use remote::Remote;
 pub use url::Url;
