@@ -44,12 +44,12 @@ impl Record {
             .get("key")
             .expect("Missing 'key' attribute")
             .to_owned();
-        self.0.insert("id".to_owned(), id);
+        self.0.insert("_id".to_owned(), id);
 
         self.0.retain(|ref k, _| schema.contains_column(&k));
 
         let checksum = self.checksum(&schema);
-        self.0.insert("checksum".to_owned(), checksum);
+        self.0.insert("_checksum".to_owned(), checksum);
     }
 
     /// Checksum is an implementation of a Blot dictionary after filtering out
