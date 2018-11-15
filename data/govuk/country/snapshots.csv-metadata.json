@@ -16,38 +16,45 @@
       "datatype": "string",
       "required": true
     }, {
-      "name": "origin",
-      "titles": "origin",
-      "description": "The URL of the original register the snapshot is taken from.",
-      "datatype": "string"
+    "name": "origin",
+    "titles": "origin",
+    "description": "The URL of the original register the snapshot is taken from.",
+    "datatype": "string"
     }, {
-      "name": "entry-number",
-      "titles": "entry-number",
-      "description": "The identifier of the latest change (entry) when the snapshot was taken.",
-      "datatype": "string"
+    "name": "entry-number",
+    "titles": "entry-number",
+    "description": "The identifier of the latest change (entry) when the snapshot was taken.",
+    "datatype": "string"
     }, {
-      "name": "published",
-      "titles": "published",
-      "description": "The date when the snapshot was taken.",
-      "format": "yyyy-MM-ddThh:mm:ssZ",
-      "datatype": "datetime"
+    "name": "published",
+    "titles": "published",
+    "description": "The date when the snapshot was taken.",
+    "format": "yyyy-MM-ddThh:mm:ssZ",
+    "datatype": "datetime"
     }, {
-      "name": "verified",
-      "titles": "verified",
-      "description": "The date when the snapshot was verified to be the most recent data in origin.",
-      "format": "yyyy-MM-ddThh:mm:ssZ",
-      "datatype": "datetime"
+    "name": "verified",
+    "titles": "verified",
+    "description": "The date when the snapshot was verified to be the most recent data in origin.",
+    "format": "yyyy-MM-ddThh:mm:ssZ",
+    "datatype": "datetime"
 
     }, {
-      "name": "superseded",
-      "titles": "superseded",
-      "description": "The snapshot identifier that supersedes this snapshot.",
-      "datatype": "string"
+    "name": "superseded",
+    "titles": "superseded",
+    "description": "The snapshot identifier that supersedes this snapshot.",
+    "datatype": "string"
     }, {
-      "name": "latest",
-      "titles": "latest",
-      "description": "True if it is the latest snapshot available.",
-      "datatype": "boolean"
+    "name": "latest",
+    "titles": "latest",
+    "description": "True if it is the latest snapshot available.",
+    "datatype": "boolean"
+    }],
+    "foreignKeys": [{
+      "columnReference": "superseded",
+      "reference": {
+        "resource": "/govuk/country/snapshots.csv",
+        "columnReference": "_id"
+      }
     }]
   }
 }
