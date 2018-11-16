@@ -24,7 +24,7 @@
     "name": "entry-number",
     "titles": "entry-number",
     "description": "The identifier of the latest change (entry) when the snapshot was taken.",
-    "datatype": "string"
+    "datatype": "integer"
     }, {
     "name": "published",
     "titles": "published",
