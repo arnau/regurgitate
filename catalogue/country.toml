@@ -1,52 +1,59 @@
 # This data should be pulled from the register itself but right now it is not
 # fit for purpose (see RFC0018).
-#  "url": "/govuk/country/latest.csv",
 origin = "https://country.register.gov.uk"
 name = "Country register"
 description = "Country list provided by the Foreign Commonwealth Office of the UK Government."
 publisher = { name = "Arnau Siches" }
 publication_date = "2018-11-11"
+id = "country"
 organisation = { id = "govuk", name = "The UK Government" }
 author = { id = "FCO", name = "Foreign Commonwealth Office" }
 copyright_holder = { id = "crown", name = "The Crown" }
 license = "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 
-#type = "Country"
+# consumes from size 100, 203 and 208 which is the current latest
+versions = {latest = true, pinned = [100, 203]}
 
 [schema]
 primary_key = ["_id"]
 
-[schema.columns.key]
+[[schema.attributes]]
+id = "_checksum"
+datatype = "string"
+required = true
+
+[[schema.attributes]]
+id = "key"
 alias = "_id"
 description = "The ISO two-letter code for a country, in uppercase."
 datatype = "string"
 format = "[A-Z]{2}"
 required = true
 
-# Probably better to remove this column from this file. Every output must have this generated column
-[schema.columns._checksum]
+[[schema.attributes]]
+id = "name"
 datatype = "string"
 required = true
 
-[schema.columns.name]
-datatype = "string"
-required = true
-
-[schema.columns.official-name]
+[[schema.attributes]]
+id = "official-name"
 alias = "official_name"
 datatype = "string"
 
-[schema.columns.citizen-name]
+[[schema.attributes]]
+id = "citizen-name"
 alias = "citizen_names"
 datatype = "string"
 separator = ";"
 
-[schema.columns.start-date]
+[[schema.attributes]]
+id = "start-date"
 alias = "start_date"
 format = "yyyy-MM-dd"
 datatype = "date"
 
-[schema.columns.end-date]
+[[schema.attributes]]
+id = "end-date"
 alias = "end_date"
 format = "yyyy-MM-dd"
 datatype = "date"

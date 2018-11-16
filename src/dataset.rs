@@ -1,20 +1,22 @@
 use blot::multihash::{Hash, Multihash, Sha3256};
 use blot::tag::Tag;
 use blot::Blot;
-use crate::table::Schema;
+use crate::context::{ Schema, Attribute };
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
-
-/// A data storage should implement this trait.
-pub trait Storage {
-    fn write(&self) -> Result<(), Box<dyn Error>>;
-}
+use std::path::PathBuf;
 
 /// A data source should implement this trait
 pub trait Source {
     fn read(&mut self) -> Result<(), Box<dyn Error>>;
     fn records(&self) -> &Records;
 }
+
+/// A data storage should implement this trait.
+pub trait Storage: Source {
+    fn write(&mut self, path: PathBuf) -> Result<(), Box<dyn Error>>;
+}
+
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Records(Vec<Record>);
@@ -31,56 +33,94 @@ impl Records {
     pub fn extend(&mut self, other: Records) {
         self.0.extend(other.0)
     }
+
+    pub fn push(&mut self, el: Record) {
+        self.0.push(el)
+    }
+
+    pub fn as_slice(&self) -> &[Record] {
+        self.0.as_slice()
+    }
+
+    pub fn checksum(&mut self) -> String {
+        let digester = Sha3256;
+        self.0.sort_unstable_by(|a, b| a.id().cmp(&b.id()));
+
+        let digest =  self.0
+            .iter()
+            .filter_map(|record| record.checksum())
+            .collect::<Vec<String>>()
+            .digest(digester);
+
+        format!("{}", digest)
+    }
 }
+
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Record(HashMap<String, String>);
 
 impl Record {
-    /// Retains any attribute found in the schema
-    pub fn retain(&mut self, schema: &Schema) {
-        let id = self
-            .0
-            .get("key")
-            .expect("Missing 'key' attribute")
-            .to_owned();
-        self.0.insert("_id".to_owned(), id);
-
-        self.0.retain(|ref k, _| schema.contains_column(&k));
-
-        let checksum = self.checksum(&schema);
-        self.0.insert("_checksum".to_owned(), checksum);
+    pub fn id(&self) -> Option<String> {
+        self.0.get("_id").map(|s| s.clone())
     }
 
-    /// Checksum is an implementation of a Blot dictionary after filtering out
-    /// empty cells and tranforming multivalue cells into sets of values.
-    pub fn checksum(&self, schema: &Schema) -> String {
+    pub fn checksum(&self) -> Option<String> {
+        self.0.get("_checksum").map(|s| s.clone())
+    }
+
+    pub fn as_row(&self, attributes: &[Attribute]) -> Vec<String> {
+        let mut result = Vec::new();
+
+        for attr in attributes {
+            if let Some(value) = self.0.get(attr.id()) {
+                result.push(value.clone());
+            } else {
+                result.push("".to_string());
+            }
+        }
+
+        result
+    }
+
+    /// Casts the record according to the given context schema.
+    ///
+    /// TODO: Shoud be part of the deserialization process.
+    pub fn cast(&mut self, schema: &Schema) {
         let digester = Sha3256;
-        let mut list: Vec<Vec<u8>> = self
-            .0
-            .iter()
-            .filter(|(_, v)| !v.is_empty())
-            .map(|(k, v)| {
-                let mut res: Vec<u8> = Vec::with_capacity(64);
-                res.extend_from_slice(k.blot(&digester).as_ref());
+        let mut hash_list: Vec<Vec<u8>> = Vec::new();
+        let mut result: HashMap<String, String> = HashMap::new();
 
-                let col = schema.column(k).expect("Missing column");
-
-                if let Some(separator) = col.separator() {
-                    let set: HashSet<&str> = v.split(*separator).collect();
-                    res.extend_from_slice(set.blot(&digester).as_ref());
+        for (key, value) in &self.0 {
+            if let Some(attr) = schema.attribute(&key) {
+                if let Some(alias) = attr.alias() {
+                    result.insert(alias.to_owned(), value.to_owned());
                 } else {
-                    res.extend_from_slice(v.blot(&digester).as_ref());
+                    result.insert(key.to_owned(), value.to_owned());
                 }
 
-                res
-            }).collect();
+                // Compute leaf hash
+                if !value.is_empty() {
+                    let mut res: Vec<u8> = Vec::with_capacity(64);
+                    res.extend_from_slice(key.blot(&digester).as_ref());
 
-        list.sort_unstable();
+                    if let Some(separator) = attr.separator() {
+                        let set: HashSet<&str> = value.split(*separator).collect();
+                        res.extend_from_slice(set.blot(&digester).as_ref());
+                    } else {
+                        res.extend_from_slice(value.blot(&digester).as_ref());
+                    }
 
-        let digest = digester.digest_collection(Tag::Dict, list);
-        let hash = Hash::new(digester, digest);
+                    hash_list.push(res);
+                }
+            }
+        }
 
-        format!("{}", hash)
+        hash_list.sort_unstable();
+
+        let digest = digester.digest_collection(Tag::Dict, hash_list);
+        result.insert("_checksum".to_owned(), format!("{}", Hash::new(digester, digest)));
+
+        self.0 = result;
     }
 }
