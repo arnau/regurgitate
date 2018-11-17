@@ -1,11 +1,11 @@
 use crate::context::Context;
 use crate::{Record, Records, Source, Storage};
 use csv;
-use std::path::PathBuf;
-use std::fs::File;
 use reqwest::{header, Client, StatusCode};
 use std::error::Error;
 use std::fmt;
+use std::fs::File;
+use std::path::PathBuf;
 
 /// A remote storage.
 pub struct Remote {
@@ -74,7 +74,6 @@ impl Remote {
     fn write_metadata(&self, path: &PathBuf) -> Result<(), Box<dyn Error>> {
         Ok(())
     }
-
 }
 
 impl Source for Remote {
@@ -90,9 +89,10 @@ impl Source for Remote {
 }
 
 impl Storage for Remote {
-    fn write(&mut self, path: PathBuf) -> Result<(), Box<dyn Error>> {
+    fn write(&mut self, base_path: PathBuf) -> Result<(), Box<dyn Error>> {
         let checksum = self.records.checksum();
-        let path = path.join(checksum).with_extension("csv");
+        let snapshot_path = base_path.join("snapshots");
+        let path = snapshot_path.join(checksum).with_extension("csv");
         self.write_data(&path)?;
         self.write_metadata(&path.with_extension("csv-metadata.json"))?;
 
