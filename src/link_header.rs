@@ -68,7 +68,7 @@ fn parse_param_tokens<'a>(tokens: &'a [&str]) -> Result<HashMap<&'a str, &'a str
 }
 
 fn parse_param_token(token: &str) -> Result<(&str, &str), ParseError> {
-    let pairs: Vec<&str> = token.split("=").collect();
+    let pairs: Vec<&str> = token.splitn(2, '=').collect();
     if pairs.len() != 2 {
         return Err(ParseError(
             "Unexpected param token. Expected \"<name>\"=<value>".into(),
