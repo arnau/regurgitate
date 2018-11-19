@@ -1,7 +1,9 @@
 use crate::context::Context;
+use crate::link_header::Link;
+use crate::url::Url;
 use crate::{Record, Records, Source, Storage};
 use csv;
-use reqwest::{header, Client, StatusCode};
+use reqwest::{header, Client};
 use std::error::Error;
 use std::fmt;
 use std::fs::File;
@@ -23,33 +25,36 @@ impl Remote {
         }
     }
 
-    fn fetch(&mut self, path: &str) -> Result<(), Box<dyn Error>> {
+    fn fetch(&mut self, url: &Url) -> Result<(), Box<dyn Error>> {
+        println!("{}", url);
         let res = &mut self
             .client
-            .get(&format!("{}{}", &self.context.origin(), path))
+            .get(url.as_str())
             .header(header::ACCEPT, header::HeaderValue::from_static("text/csv"))
             .send()?;
 
-        match res.status() {
-            StatusCode::OK => {
-                let mut rdr = csv::Reader::from_reader(res);
-                for result in rdr.deserialize() {
-                    let mut record: Record = result?;
-                    record.cast(&self.context.schema());
-                    self.records.push(record);
-                }
+        if res.status().is_success() {
+            let mut buf: Vec<u8> = vec![];
+            res.copy_to(&mut buf)?;
 
-                // if let Some(link_header) = res.headers().get(header::LINK) {
-                //     println!("Headers:\n{:#?}", &link_header);
-
-                //     if link_header.to_str()?.contains("next") {
-                //         return self.fetch_page(&format!("{}?page-index=2", url), &client);
-                //     }
-                // }
-
-                Ok(())
+            let mut rdr = csv::Reader::from_reader(buf.as_slice());
+            for result in rdr.deserialize() {
+                let mut record: Record = result?;
+                record.cast(&self.context.schema());
+                self.records.push(record);
             }
-            _ => Err(Box::new(FetchError)),
+
+            if let Some(links) = res.headers().get(header::LINK).map(|link_header| {
+                Link::from_header(link_header).expect("Link to be of the right format")
+            }) {
+                if let Some(next_url) = links.iter().find(|lnk| lnk.is_next()) {
+                    return self.fetch(&url.join(next_url.to_str())?);
+                }
+            }
+
+            Ok(())
+        } else {
+            Err(Box::new(FetchError))
         }
     }
 
@@ -78,7 +83,8 @@ impl Remote {
 
 impl Source for Remote {
     fn read(&mut self) -> Result<(), Box<dyn Error>> {
-        &self.fetch("/records");
+        let url = Url::parse(self.context.origin())?.join("/records")?;
+        &self.fetch(&url);
 
         Ok(())
     }
