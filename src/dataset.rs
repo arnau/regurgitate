@@ -1,7 +1,7 @@
 use blot::multihash::{Hash, Multihash, Sha3256};
 use blot::tag::Tag;
 use blot::Blot;
-use crate::context::{ Schema, Attribute };
+use crate::context::{Attribute, Schema};
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::path::PathBuf;
@@ -9,14 +9,12 @@ use std::path::PathBuf;
 /// A data source should implement this trait
 pub trait Source {
     fn read(&mut self) -> Result<(), Box<dyn Error>>;
-    fn records(&self) -> &Records;
 }
 
 /// A data storage should implement this trait.
 pub trait Storage: Source {
     fn write(&mut self, path: PathBuf) -> Result<(), Box<dyn Error>>;
 }
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Records(Vec<Record>);
@@ -46,7 +44,8 @@ impl Records {
         let digester = Sha3256;
         self.0.sort_unstable_by(|a, b| a.id().cmp(&b.id()));
 
-        let digest =  self.0
+        let digest = self
+            .0
             .iter()
             .filter_map(|record| record.checksum())
             .collect::<Vec<String>>()
@@ -55,7 +54,6 @@ impl Records {
         format!("{}", digest)
     }
 }
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Record(HashMap<String, String>);
@@ -119,7 +117,10 @@ impl Record {
         hash_list.sort_unstable();
 
         let digest = digester.digest_collection(Tag::Dict, hash_list);
-        result.insert("_checksum".to_owned(), format!("{}", Hash::new(digester, digest)));
+        result.insert(
+            "_checksum".to_owned(),
+            format!("{}", Hash::new(digester, digest)),
+        );
 
         self.0 = result;
     }

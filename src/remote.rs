@@ -79,6 +79,10 @@ impl Remote {
     fn write_metadata(&self, path: &PathBuf) -> Result<(), Box<dyn Error>> {
         Ok(())
     }
+
+    pub fn records(&self) -> &Records {
+        &self.records
+    }
 }
 
 impl Source for Remote {
@@ -87,10 +91,6 @@ impl Source for Remote {
         &self.fetch(&url);
 
         Ok(())
-    }
-
-    fn records(&self) -> &Records {
-        &self.records
     }
 }
 
