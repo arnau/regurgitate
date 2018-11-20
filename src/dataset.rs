@@ -1,7 +1,7 @@
 use blot::multihash::{Hash, Multihash, Sha3256};
 use blot::tag::Tag;
 use blot::Blot;
-use crate::context::{Attribute, Schema};
+use crate::context::{Attribute, Schema, Context};
 use std::collections::{HashMap, HashSet};
 use std::error::Error;
 use std::path::PathBuf;
@@ -9,6 +9,10 @@ use std::path::PathBuf;
 /// A data source should implement this trait
 pub trait Source {
     fn read(&mut self) -> Result<(), Box<dyn Error>>;
+    /// The context defining the dataset to be read.
+    fn context(&self) -> &Context;
+    /// The data checksum. None if there is no data.
+    fn checksum(&self) -> Option<String>;
 }
 
 /// A data storage should implement this trait.
@@ -16,7 +20,7 @@ pub trait Storage: Source {
     fn write(&mut self, path: PathBuf) -> Result<(), Box<dyn Error>>;
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Records(Vec<Record>);
 
 impl Records {
@@ -36,16 +40,21 @@ impl Records {
         self.0.push(el)
     }
 
+    pub fn sort(mut self) -> Self {
+        self.0.sort_unstable_by(|a, b| a.id().cmp(&b.id()));
+        self
+    }
+
     pub fn as_slice(&self) -> &[Record] {
         self.0.as_slice()
     }
 
-    pub fn checksum(&mut self) -> String {
+    pub fn checksum(&self) -> String {
         let digester = Sha3256;
-        self.0.sort_unstable_by(|a, b| a.id().cmp(&b.id()));
+        let mut list = self.0.clone();
+        list.sort_unstable_by(|a, b| a.id().cmp(&b.id()));
 
-        let digest = self
-            .0
+        let digest = list
             .iter()
             .filter_map(|record| record.checksum())
             .collect::<Vec<String>>()
@@ -55,7 +64,7 @@ impl Records {
     }
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Record(HashMap<String, String>);
 
 impl Record {

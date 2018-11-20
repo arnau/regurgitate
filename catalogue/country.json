@@ -5,7 +5,6 @@
   "schema:name": "Country register",
   "schema:identifier": "16206a874d89f09d1e36ca2f7caa6fe4a21b1d877dc348e6e6a3c638ad63afb8db7b",
   "schema:description": "Country list provided by the Foreign Commonwealth Office of the UK Government.",
-  "schema:publisher": { "schema:name": "Arnau Siches" },
   "schema:datePublished": "2018-11-11",
   "schema:author": { "schema:name": "Foreign Commonwealth Office" },
   "schema:copyrightHolder": { "schema:name": "The Crown" },
@@ -17,7 +16,6 @@
       "name": "_id",
       "titles": "_id",
       "schema:description": "The ISO two-letter code for a country, in uppercase.",
-      "propertyUrl": "schema:identifier",
       "datatype": "string",
       "format": "[A-Z]{2}",
       "required": true
@@ -30,7 +28,6 @@
       "name": "name",
       "titles": "name",
       "datatype": "string",
-      "propertyUrl": "schema:name",
       "required": true
     }, {
       "name": "official-name",
@@ -51,10 +48,6 @@
       "titles": "end-date",
       "format": "yyyy-MM-dd",
       "datatype": "date"
-    }, {
-      "virtual": true,
-      "propertyUrl": "rdf:type",
-      "valueUrl": "schema:Country"
     }]
   }
 }

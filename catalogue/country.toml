@@ -3,11 +3,10 @@
 origin = "https://country.register.gov.uk"
 name = "Country register"
 description = "Country list provided by the Foreign Commonwealth Office of the UK Government."
-publisher = { name = "Arnau Siches" }
 publication_date = "2018-11-11"
 id = "country"
 organisation = { id = "govuk", name = "The UK Government" }
-author = { id = "FCO", name = "Foreign Commonwealth Office" }
+owner = { id = "FCO", name = "Foreign Commonwealth Office" }
 copyright_holder = { id = "crown", name = "The Crown" }
 license = "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 

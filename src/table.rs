@@ -1,6 +1,9 @@
 //! Naive implementation of CSVW tabular data model
 //!
 
+use crate::context::{Attribute, Context, Organisation};
+use crate::Source;
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Table {
     #[serde(rename = "@context")]
@@ -13,8 +16,6 @@ pub struct Table {
     description: String,
     #[serde(rename = "schema:author")]
     author: Author,
-    #[serde(rename = "schema:publisher")]
-    publisher: Author,
     #[serde(rename = "schema:datePublished")]
     date_published: String,
     url: String,
@@ -38,6 +39,29 @@ impl Table {
     }
 }
 
+impl<T: Source> From<T> for Table {
+    fn from(source: T) -> Table {
+        let context = source.context();
+        let checksum = source.checksum().unwrap_or("partial".into());
+
+        Table {
+            context: "http://www.w3.org/ns/csvw".into(),
+            id: context.id().into(),
+            name: context.name().into(),
+            description: context.description().into(),
+            author: context.owner().clone().into(),
+            date_published: context.publication_date().into(),
+            url: format!("/{}/{}/{}.csv", context.org_id(), context.id(), checksum),
+            source: context.origin().into(),
+            copyright_holder: CopyrightHolder {
+                name: context.copyright_holder().name().into(),
+            },
+            license: context.license().into(),
+            schema: context.clone().into(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Column {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -49,28 +73,33 @@ pub struct Column {
         skip_serializing_if = "Option::is_none"
     )]
     description: Option<String>,
-    #[serde(
-        rename = "propertyUrl",
-        skip_serializing_if = "Option::is_none"
-    )]
-    property_url: Option<String>,
-    #[serde(rename = "valueUrl", skip_serializing_if = "Option::is_none")]
-    value_url: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     datatype: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
     separator: Option<char>,
     #[serde(skip_serializing_if = "Option::is_none")]
     format: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    required: Option<bool>,
-    #[serde(rename = "virtual", skip_serializing_if = "Option::is_none")]
-    implicit: Option<bool>,
+    #[serde(default)]
+    required: bool,
 }
 
 impl Column {
     pub fn separator(&self) -> &Option<char> {
         &self.separator
+    }
+}
+
+impl From<Attribute> for Column {
+    fn from(attr: Attribute) -> Column {
+        Column {
+            name: Some(attr.id().into()),
+            titles: Some(attr.id().into()),
+            description: attr.description().clone(),
+            datatype: Some(attr.datatype().into()),
+            separator: attr.separator().clone(),
+            format: attr.format().clone(),
+            required: attr.required(),
+        }
     }
 }
 
@@ -97,10 +126,29 @@ impl Schema {
     }
 }
 
+impl From<Context> for Schema {
+    fn from(context: Context) -> Schema {
+        let schema = context.schema();
+        Schema {
+            about_url: format!("{}/records/{{{}}}", context.origin(), schema.primary_key()),
+            columns: schema.attributes().into_iter().map(|attr| Column::from(attr.clone())).collect(),
+            primary_key: schema.primary_key().into(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Author {
     #[serde(rename = "schema:name")]
     name: String,
+}
+
+impl From<Organisation> for Author {
+    fn from(org: Organisation) -> Author {
+        Author {
+            name: org.name().into(),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize, Serialize)]

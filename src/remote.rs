@@ -1,5 +1,6 @@
 use crate::context::Context;
 use crate::link_header::Link;
+use crate::table::Table;
 use crate::url::Url;
 use crate::{Record, Records, Source, Storage};
 use csv;
@@ -10,6 +11,7 @@ use std::fs::File;
 use std::path::PathBuf;
 
 /// A remote storage.
+#[derive(Debug, Clone)]
 pub struct Remote {
     client: Client,
     context: Context,
@@ -63,10 +65,12 @@ impl Remote {
         let mut wtr = csv::Writer::from_writer(file);
 
         let attrs = &self.context.schema_attributes();
+        // TODO: Fix this nonsense. BTreeMap perhaps?
+        let records = self.records().clone().sort();
 
         wtr.serialize(attrs.iter().map(|attr| attr.id()).collect::<Vec<&str>>())?;
 
-        for record in self.records.as_slice() {
+        for record in records.as_slice() {
             let row = record.as_row(&self.context.schema_attributes());
             wtr.serialize(row)?;
         }
@@ -77,6 +81,10 @@ impl Remote {
     }
 
     fn write_metadata(&self, path: &PathBuf) -> Result<(), Box<dyn Error>> {
+        let table: Table = (*self).clone().into();
+        let file = File::create(path)?;
+        serde_json::to_writer_pretty(&file, &table)?;
+
         Ok(())
     }
 
@@ -91,6 +99,18 @@ impl Source for Remote {
         &self.fetch(&url);
 
         Ok(())
+    }
+
+    fn context(&self) -> &Context {
+        &self.context
+    }
+
+    fn checksum(&self) -> Option<String> {
+        if self.records.len() == 0 {
+            return None;
+        }
+
+        Some(self.records.checksum())
     }
 }
 

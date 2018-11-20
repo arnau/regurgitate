@@ -1,0 +1,69 @@
+{
+  "@context": "http://www.w3.org/ns/csvw",
+  "schema:identifier": "country",
+  "schema:name": "Country register",
+  "schema:description": "Country list provided by the Foreign Commonwealth Office of the UK Government.",
+  "schema:author": {
+    "schema:name": "Foreign Commonwealth Office"
+  },
+  "schema:datePublished": "2018-11-11",
+  "url": "/govuk/country/1620cae83d93c7483f9ea86223792c65a8b4d39519781bcf15041689d4aaab862bfd.csv",
+  "schema:isBasedOn": "https://country.register.gov.uk",
+  "schema:copyrightHolder": {
+    "schema:name": "The Crown"
+  },
+  "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+  "tableSchema": {
+    "aboutUrl": "https://country.register.gov.uk/records/{_id}",
+    "columns": [
+      {
+        "name": "_checksum",
+        "titles": "_checksum",
+        "datatype": "string",
+        "required": true
+      },
+      {
+        "name": "_id",
+        "titles": "_id",
+        "schema:description": "The ISO two-letter code for a country, in uppercase.",
+        "datatype": "string",
+        "format": "[A-Z]{2}",
+        "required": true
+      },
+      {
+        "name": "name",
+        "titles": "name",
+        "datatype": "string",
+        "required": true
+      },
+      {
+        "name": "official_name",
+        "titles": "official_name",
+        "datatype": "string",
+        "required": false
+      },
+      {
+        "name": "citizen_names",
+        "titles": "citizen_names",
+        "datatype": "string",
+        "separator": ";",
+        "required": false
+      },
+      {
+        "name": "start_date",
+        "titles": "start_date",
+        "datatype": "date",
+        "format": "yyyy-MM-dd",
+        "required": false
+      },
+      {
+        "name": "end_date",
+        "titles": "end_date",
+        "datatype": "date",
+        "format": "yyyy-MM-dd",
+        "required": false
+      }
+    ],
+    "primaryKey": "_id"
+  }
+}
