@@ -40,7 +40,7 @@ alias = "official_name"
 datatype = "string"
 
 [[schema.attributes]]
-id = "citizen-name"
+id = "citizen-names"
 alias = "citizen_names"
 datatype = "string"
 separator = ";"
