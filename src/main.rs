@@ -31,8 +31,14 @@ fn process_dataset(context_path: &PathBuf) -> Result<(), Box<dyn Error>> {
     let context: Context = toml::from_str(&raw)?;
 
     let output_path = PathBuf::from(format!("data/{}/{}", &context.org_id(), &context.id()));
+    let snapshots_path = output_path.join("snapshots");
+
     if !output_path.exists() {
         fs::create_dir(&output_path)?;
+    }
+
+    if !snapshots_path.exists() {
+        fs::create_dir(&snapshots_path)?;
     }
 
     let mut storage = Remote::new(context);

@@ -1,17 +1,14 @@
-# This data should be pulled from the register itself but right now it is not
-# fit for purpose (see RFC0018).
-origin = "https://country.register.gov.uk"
-name = "Countries"
-description = "Country list provided by the Foreign Commonwealth Office of the UK Government."
+origin = "https://local-authority-eng.register.gov.uk"
+name = "Local authorities in England"
+description = "Local authorities in England"
 publication_date = "2018-11-11"
-id = "country"
+id = "local-authority-england"
 organisation = { id = "govuk", name = "The UK Government" }
-owner = { id = "FCO", name = "Foreign Commonwealth Office" }
+owner = { id = "MHCLG", name = "Ministry of Housing, Communities and Local Government" }
 copyright_holder = { id = "crown", name = "The Crown" }
 license = "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
 
-# consumes from size 100, 203 and 208 which is the current latest
-versions = {latest = true, pinned = [100, 203]}
+versions = {latest = true, pinned = []}
 
 [schema]
 primary_key = ["_id"]
@@ -24,9 +21,8 @@ required = true
 [[schema.attributes]]
 id = "key"
 alias = "_id"
-description = "The ISO two-letter code for a country, in uppercase."
 datatype = "string"
-format = "[A-Z]{2}"
+format = "[A-Z]{3,4}"
 required = true
 
 [[schema.attributes]]

@@ -1,20 +1,20 @@
 {
   "@context": "http://www.w3.org/ns/csvw",
-  "schema:identifier": "country",
-  "schema:name": "Countries",
-  "schema:description": "Country list provided by the Foreign Commonwealth Office of the UK Government.",
+  "schema:identifier": "local-authority-england",
+  "schema:name": "Local authorities in England",
+  "schema:description": "Local authorities in England",
   "schema:author": {
-    "schema:name": "Foreign Commonwealth Office"
+    "schema:name": "Ministry of Housing, Communities and Local Government"
   },
   "schema:datePublished": "2018-11-11",
-  "url": "/govuk/country/1620eccb92b216b137a980da7e756072cd3473d9255a938e81f94af1ed0345dc97c9.csv",
-  "schema:isBasedOn": "https://country.register.gov.uk",
+  "url": "/govuk/local-authority-england/1620d066cc6d3b968701ae318637209b359f560e24aa477f4450c0bd55a6055220b1.csv",
+  "schema:isBasedOn": "https://local-authority-eng.register.gov.uk",
   "schema:copyrightHolder": {
     "schema:name": "The Crown"
   },
   "schema:license": "http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
   "tableSchema": {
-    "aboutUrl": "https://country.register.gov.uk/records/{_id}",
+    "aboutUrl": "https://local-authority-eng.register.gov.uk/records/{_id}",
     "columns": [
       {
         "name": "_checksum",
@@ -25,9 +25,8 @@
       {
         "name": "_id",
         "titles": "_id",
-        "schema:description": "The ISO two-letter code for a country, in uppercase.",
         "datatype": "string",
-        "format": "[A-Z]{2}",
+        "format": "[A-Z]{3}",
         "required": true
       },
       {

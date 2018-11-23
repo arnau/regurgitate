@@ -131,7 +131,11 @@ impl From<Context> for Schema {
         let schema = context.schema();
         Schema {
             about_url: format!("{}/records/{{{}}}", context.origin(), schema.primary_key()),
-            columns: schema.attributes().into_iter().map(|attr| Column::from(attr.clone())).collect(),
+            columns: schema
+                .attributes()
+                .into_iter()
+                .map(|attr| Column::from(attr.clone()))
+                .collect(),
             primary_key: schema.primary_key().into(),
         }
     }
